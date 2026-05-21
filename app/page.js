@@ -163,7 +163,7 @@ export default function Home() {
               </ul>
 
               <a
-                href="/plain-speak-extension.zip"
+                href="https://scurrro.gumroad.com/l/ilmzh"
                 className="download-btn reveal d3"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
