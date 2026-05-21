@@ -103,7 +103,7 @@ export default function Home() {
 
         <div style={{ position: 'relative', zIndex: 1 }}>
           <div className="hero-greeting reveal d1">
-            Hello, Mr. Garrett. Welcome.
+            Hello, Welcome to Griffin's Portfolio.
           </div>
           <h1 className="hero-title reveal d2">
             Walking slow<br />
