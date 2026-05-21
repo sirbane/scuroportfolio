@@ -1,7 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 
-const PHONE     = '+254700000000'; // ← replace with real number
+const PHONE     = '+254105978871'; // ← replace with real number
 const WA_NUM    = PHONE.replace(/\D/g, '');
 const TT_LINK_1 = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
 const TT_LINK_2 = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
