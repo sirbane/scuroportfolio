@@ -1,442 +1,216 @@
 'use client';
+import { useEffect } from 'react';
 
-import { useEffect, useRef } from 'react';
+const PHONE     = '+254700000000'; // ← replace with real number
+const WA_NUM    = PHONE.replace(/\D/g, '');
+const TT_LINK_1 = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
+const TT_LINK_2 = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
 
-/* ── TikTok Video Embed ── */
-function TikTokEmbed({ videoId, title }) {
+/* ── scroll reveal ── */
+function useReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }),
+      { threshold: 0.1 }
+    );
+    els.forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+}
+
+/* ── reusable eyebrow ── */
+function Eyebrow({ label, variant = 'gold' }) {
   return (
-    <div className="tiktok-wrapper">
-      <iframe
-        src={`https://www.tiktok.com/embed/v2/${videoId}?autoplay=1&loop=1`}
-        title={title}
-        allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"
-        allowFullScreen
-        loading="lazy"
-      />
+    <div className={`eyebrow eyebrow-${variant}`}>
+      <span className="eyebrow-line" />
+      {label}
     </div>
   );
 }
 
-/* ── Animated number on scroll ── */
-function AnimatedStat({ value, label }) {
+/* ── video preview card (no embed – opens TikTok) ── */
+function VideoCard({ href, caption, bgClass }) {
   return (
-    <div className="stat-item">
-      <span className="stat-value">{value}</span>
-      <span className="stat-label">{label}</span>
-    </div>
-  );
-}
+    <a className={`video-card`} href={href} target="_blank" rel="noreferrer">
+      <div className={`vc-bg ${bgClass}`} />
+      <div className="vc-trees" />
+      <div className="vc-sky" />
+      <div className="vc-ground" />
+      <div className="vc-overlay" />
 
-/* ── Asset row ── */
-function AssetRow({ icon, symbol, name, change, isUp }) {
-  return (
-    <div className="asset-card">
-      <div className="asset-left">
-        <div className="asset-icon">{icon}</div>
-        <div>
-          <div className="asset-name">{symbol}</div>
-          <div className="asset-full">{name}</div>
-        </div>
+      {/* TikTok logo badge */}
+      <div className="vc-tiktok-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.14 8.14 0 004.76 1.52V6.76a4.85 4.85 0 01-1-.07z"/>
+        </svg>
       </div>
-      <span className={`asset-change ${isUp ? 'up' : 'down'}`}>
-        {isUp ? '↑' : '↓'} {change}
-      </span>
+
+      {/* Play button */}
+      <div className="vc-play">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+          <polygon points="5,3 19,12 5,21" />
+        </svg>
+      </div>
+
+      {/* Meta */}
+      <div className="vc-meta">
+        <div className="vc-handle">@scurowalks</div>
+        <div className="vc-caption">{caption}</div>
+      </div>
+    </a>
+  );
+}
+
+/* ── asset row ── */
+function Asset({ icon, sym, name, price, change, up }) {
+  return (
+    <div className="asset-row-item">
+      <div className="asset-icon">{icon}</div>
+      <div>
+        <div className="asset-sym">{sym}</div>
+        <div className="asset-nm">{name}</div>
+      </div>
+      <div className="asset-px">{price}</div>
+      <span className={`chg ${up ? 'up' : 'dn'}`}>{up ? '↑' : '↓'} {change}</span>
     </div>
   );
 }
 
 export default function Home() {
-  /* Intersection Observer for scroll animations */
-  useEffect(() => {
-    const els = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('animate-fade-up');
-            observer.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  const PHONE = '+254700000000'; // replace with real number
-
+  useReveal();
   return (
     <>
-      {/* ═══════════════════════════════════════════
-          NAV
-      ══════════════════════════════════════════════ */}
-      <nav>
-        <a href="#top" style={{ color: 'var(--text)', fontFamily: "'Fraunces', Georgia, serif", fontStyle: 'italic', fontSize: '1rem', letterSpacing: '-0.01em' }}>
-          Scuro
-        </a>
-        <div className="nav-links" style={{ display: 'flex', gap: '2rem' }}>
-          <a href="#journey">Journey</a>
-          <a href="#scuro">Stories</a>
+      {/* ═══════════ NAV ═══════════ */}
+      <nav className="nav">
+        <a href="#top" className="nav-brand">Scuro</a>
+        <div className="nav-links">
           <a href="#plainspeak">Plain Speak</a>
           <a href="#markets">Markets</a>
+          <a href="#automation">Automation</a>
+          <a href="#scuro">Stories</a>
           <a href="#contact">Connect</a>
         </div>
-        <a href={`https://wa.me/${PHONE.replace('+', '')}`} target="_blank" rel="noreferrer">
+        <a href={`https://wa.me/${WA_NUM}`} target="_blank" rel="noreferrer" className="nav-cta">
           ↗ WhatsApp
         </a>
       </nav>
 
-      {/* ═══════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════════ */}
+      {/* ═══════════ HERO ═══════════ */}
       <section id="top" className="hero">
         <div className="hero-bg" />
-        <div className="hero-line" />
-
-        {/* Floating coordinate tag */}
-        <div style={{
-          position: 'absolute',
-          top: '7rem',
-          left: '2.5rem',
-          fontFamily: "'Space Mono', monospace",
-          fontSize: '0.58rem',
-          letterSpacing: '0.15em',
-          color: 'var(--text-faint)',
-          textTransform: 'uppercase',
-          zIndex: 1,
-        }}>
-          — 1.2921° S, 36.8219° E — Ongata Rongai, Kenya
-        </div>
+        <div className="hero-coord">1.2921° S, 36.8219° E — Ongata Rongai, Kenya</div>
 
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <h1 className="hero-title animate-fade-up delay-1">
+          <div className="hero-greeting reveal d1">
+            Hello, Mr. Garrett. Welcome.
+          </div>
+          <h1 className="hero-title reveal d2">
             Walking slow<br />
             in a world that<br />
-            <span className="accent">won&rsquo;t stop.</span>
+            won&rsquo;t stop.
           </h1>
-          <p className="hero-sub animate-fade-up delay-2">
-            A developer. A walker. A storyteller. Building AI that
-            speaks human — while learning, again, to listen to the land.
+          <p className="hero-intro reveal d3">
+            This is a space prepared especially for you by <strong>Griffin.</strong> Over the past
+            four years, Griffin has been exploring how technology can feel less like a machine and
+            more like a human conversation. This portfolio is a look at that journey — showing
+            exactly how he uses AI to simplify the world, and how that same approach can bring
+            value to the work you do together.
           </p>
         </div>
 
         <div className="hero-scroll">Scroll</div>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          THE JOURNEY — Healing narrative
-      ══════════════════════════════════════════════ */}
-      <section id="journey" className="section journey-section">
-        <div className="section-label reveal delay-1">Origin</div>
-        <h2 className="section-title reveal delay-2">
-          The city gets loud.<br />
-          <em>The land gets honest.</em>
-        </h2>
-
-        <div className="journey-grid" style={{ marginTop: '4rem' }}>
-          <div className="journey-prose reveal delay-2">
-            <p>
-              There was a season when screens filled every waking hour —
-              systems to debug, markets to decode, deadlines riding the clock.
-              <strong> The work was meaningful, but the noise was constant.</strong>
-            </p>
-            <p>
-              The remedy wasn&rsquo;t another productivity app. It was a leash.
-              A dog. A dirt road. The long, unhurried ritual of going somewhere
-              with no agenda except to be present in it.
-            </p>
-            <p>
-              Kenya&rsquo;s open land has a way of recalibrating things. Out here
-              — past Ongata Rongai where the tarmac thins and the acacia take over —
-              <strong> the body relearns its own pace.</strong> The dog pulls ahead.
-              The mind follows, slowly, into quiet.
-            </p>
-            <p>
-              These walks became a practice. Then a discipline. Then, eventually,
-              a body of stories worth sharing with anyone else searching for
-              the same unhurried exhale.
-            </p>
-          </div>
-
-          <div className="journey-visual">
-            {[
-              {
-                num: '01',
-                icon: '🌿',
-                title: 'The Rift Valley light',
-                desc: 'Dawn breaks different at altitude. Golden hour in the Rift Valley is not a metaphor — it\'s an actual instruction to stop walking and simply witness.',
-              },
-              {
-                num: '02',
-                icon: '🐕',
-                title: 'Loyal companions',
-                desc: 'Dogs don\'t negotiate with bad days. They show up, all paws and momentum, reminding you that motion is medicine and presence is everything.',
-              },
-              {
-                num: '03',
-                icon: '🪨',
-                title: 'Rivers & ridgelines',
-                desc: 'Water teaches patience. Rock teaches permanence. Walking between them teaches you which of your problems belong to which category.',
-              },
-              {
-                num: '04',
-                icon: '🌙',
-                title: 'The return',
-                desc: 'Coming back from a long walk, the city noise is the same. The difference is you — slightly recalibrated, slightly less afraid of the silence.',
-              },
-            ].map((card) => (
-              <div key={card.num} className="nature-card reveal">
-                <span className="nature-card-num">{card.num}</span>
-                <div className="nature-card-icon">{card.icon}</div>
-                <h4>{card.title}</h4>
-                <p>{card.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <div className="divider" />
 
-      {/* ═══════════════════════════════════════════
-          SCURO — AI storytelling
-      ══════════════════════════════════════════════ */}
-      <section id="scuro" className="section scuro-section">
-        <div className="scuro-header">
-          <div>
-            <div className="section-label reveal delay-1">Scuro Walks</div>
-            <h2 className="section-title reveal delay-2">
-              Stories automated<br />
-              <em>by the land itself.</em>
-            </h2>
-          </div>
-          <div className="body-text reveal delay-2" style={{ maxWidth: '420px' }}>
-            <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.8' }}>
-              Scuro is the system that turns a walk into a story — automatically.
-              GPS routes, ambient audio, dog behaviour cues, and AI narration
-              combine into shareable field notes that a growing community
-              follows across TikTok and beyond.
-            </p>
-            <p style={{ marginTop: '1rem', color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.8' }}>
-              The name means <em style={{ color: 'var(--text)' }}>&ldquo;dark&rdquo;</em> in Italian — after the
-              pre-dawn hours when the walks begin and the world belongs
-              only to those awake enough to witness it.
-            </p>
-          </div>
-        </div>
-
-        {/* TikTok Embeds */}
-        <div className="reveal">
-          <div className="section-label" style={{ marginBottom: '1.5rem' }}>
-            Live from the field
-          </div>
-          <div className="tiktok-grid">
-            <TikTokEmbed
-              videoId="7611897363770166546"
-              title="Scuro Walk — Field Recording 1"
-            />
-            <TikTokEmbed
-              videoId="7611907436244471047"
-              title="Scuro Walk — Field Recording 2"
-            />
-          </div>
-        </div>
-
-        <div className="scuro-stats">
-          <AnimatedStat value="2.5k+" label="Views on recent drop" />
-          <AnimatedStat value="Daily" label="Automated uploads" />
-          <AnimatedStat value="Zero" label="Manual editing required" />
-        </div>
-
-        {/* How it works */}
-        <div style={{ marginTop: '5rem', paddingTop: '5rem', borderTop: '1px solid var(--border)' }}>
-          <div className="section-label reveal">How Scuro captures a story</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2rem', marginTop: '2.5rem' }}>
-            {[
-              { step: '01', label: 'Walk begins', desc: 'GPS starts logging. Camera rolls on a mount. Audio captures ambient soundscape — wind, birds, water.' },
-              { step: '02', label: 'AI narrates', desc: 'Location data, pace, and visual scene are fed to a language model that drafts context-aware voiceover.' },
-              { step: '03', label: 'Auto-edit', desc: 'Clips are trimmed, colour-graded to that signature dark contrast, and text overlays applied programmatically.' },
-              { step: '04', label: 'Community notified', desc: 'Published and scheduled automatically. Followers wake up to a field note from a walk that happened at dawn.' },
-            ].map((item) => (
-              <div key={item.step} className="reveal" style={{
-                padding: '1.75rem',
-                border: '1px solid var(--border)',
-                borderRadius: '2px',
-                background: 'linear-gradient(135deg, rgba(196,164,90,0.03) 0%, transparent 50%)',
-              }}>
-                <div style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.58rem',
-                  letterSpacing: '0.2em',
-                  color: 'var(--gold)',
-                  marginBottom: '1rem',
-                }}>
-                  STEP {item.step}
-                </div>
-                <h4 style={{
-                  fontFamily: "'Fraunces', Georgia, serif",
-                  fontStyle: 'italic',
-                  fontSize: '1.1rem',
-                  fontWeight: 400,
-                  color: 'var(--text)',
-                  marginBottom: '0.75rem',
-                }}>
-                  {item.label}
-                </h4>
-                <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)', lineHeight: '1.65' }}>
-                  {item.desc}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="divider" />
-
-      {/* ═══════════════════════════════════════════
-          PLAIN SPEAK AI
-      ══════════════════════════════════════════════ */}
+      {/* ═══════════ PLAIN SPEAK AI ═══════════ */}
       <section id="plainspeak" className="section plainspeak-section">
-        <div className="plainspeak-grid">
-          <div>
-            <div className="section-label reveal delay-1" style={{ color: 'var(--blue)' }}>
-              <span style={{ background: 'var(--blue)', width: '2rem', height: '1px', display: 'inline-block' }} />
-              Plain Speak AI
-            </div>
-            <h2 className="section-title reveal delay-2">
-              Tech should talk<br />
-              <em style={{ color: 'var(--blue)' }}>like a person.</em>
-            </h2>
-            <p className="body-text reveal delay-2" style={{ marginTop: '1.75rem' }}>
-              Plain Speak AI is a browser extension that intercepts jargon
-              and replaces it with language that anyone can understand.
-              Not dumbed-down — <strong style={{ color: 'var(--text)' }}>translated</strong>. The
-              meaning survives. The confusion doesn&rsquo;t.
-            </p>
-
-            <ul className="feature-list">
-              {[
-                {
-                  num: '→',
-                  title: 'Three reading levels',
-                  desc: 'Child, Simple, or Learner mode — dial the complexity to match where you are, not where the author assumed you\'d be.',
-                },
-                {
-                  num: '→',
-                  title: 'Live page simplification',
-                  desc: 'One click rewrites the entire page in real time. Documentation, research papers, legal pages — all speak plainly.',
-                },
-                {
-                  num: '→',
-                  title: 'Restore original instantly',
-                  desc: 'Need the technical version back? One click. Plain Speak never deletes, only translates.',
-                },
-                {
-                  num: '→',
-                  title: 'Powered by Groq\'s fast inference',
-                  desc: 'Translation happens in under a second — fast enough that you don\'t remember waiting.',
-                },
-              ].map((feat, i) => (
-                <li key={i} className="reveal">
-                  <span className="feat-num">{feat.num}</span>
-                  <div className="feat-text">
-                    <strong>{feat.title}</strong>
-                    {feat.desc}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* App Mockup */}
-          <div className="app-mockup reveal delay-3">
-            <div className="mockup-bar">
-              <div className="mockup-dot" style={{ background: '#ff5f56' }} />
-              <div className="mockup-dot" style={{ background: '#ffbd2e' }} />
-              <div className="mockup-dot" style={{ background: '#27c93f' }} />
-              <span className="mockup-url">www.langchain.com</span>
-            </div>
-            <div className="mockup-body">
-              <div className="mockup-pill">
-                <span className="dot" />
-                Plain Speak AI — Page simplified ✓
+        <div className="section-inner">
+          <div className="two-col">
+            {/* Left — copy */}
+            <div>
+              <div className="eyebrow eyebrow-blue reveal d1">
+                <span className="eyebrow-line" style={{ background: 'var(--blue)' }} />
+                Plain Speak AI
               </div>
-
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '1.25rem', lineHeight: '1.6' }}>
-                <strong style={{ color: 'var(--text)', fontWeight: 500 }}>Original:</strong> &ldquo;LangSmith is an all-in-one developer platform for every step of the LLM-powered application lifecycle, whether you&rsquo;re building with LangChain or not.&rdquo;
+              <h2 className="display-serif reveal d2" style={{ fontSize: 'clamp(2.8rem, 5.5vw, 5rem)', color: 'var(--text)' }}>
+                Tech should talk<br />
+                <em style={{ color: 'var(--blue)' }}>like a person.</em>
+              </h2>
+              <p className="body-prose reveal d2" style={{ marginTop: '1.75rem' }}>
+                Plain Speak AI is a browser extension that intercepts jargon and replaces it
+                with language that anyone can understand. Not dumbed-down —{' '}
+                <strong>translated.</strong> The meaning survives. The confusion doesn&rsquo;t.
+              </p>
+              <p className="body-prose reveal d2" style={{ marginTop: '1rem', fontSize: '0.92rem' }}>
+                Highlight any complex technical phrase on your screen and receive a clear,
+                everyday translation instantly — without breaking your workflow or switching tabs.
               </p>
 
-              <div style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: '0.6rem',
-                letterSpacing: '0.12em',
-                color: 'rgba(74,158,255,0.6)',
-                textTransform: 'uppercase',
-                marginBottom: '0.5rem',
-              }}>
-                Simplicity Level
-              </div>
-              <div className="simplify-levels">
-                <div className="level-btn active">🧒 Child</div>
-                <div className="level-btn">🙂 Simple</div>
-                <div className="level-btn">📖 Learner</div>
-              </div>
+              <ul className="feat-list">
+                {[
+                  { title: 'Three reading levels', desc: "Child, Simple, or Learner mode — dial the complexity to match where you are, not where the author assumed you'd be." },
+                  { title: 'Live page simplification', desc: 'One click rewrites the entire page in real time. Documentation, research papers, legal pages — all speak plainly.' },
+                  { title: 'Restore original instantly', desc: 'Need the technical version back? One click. Plain Speak never deletes, only translates.' },
+                  { title: "Powered by Groq's fast inference", desc: "Translation happens in under a second — fast enough that you don't remember waiting." },
+                ].map((f, i) => (
+                  <li key={i} className="reveal">
+                    <span className="feat-arrow">→</span>
+                    <div className="feat-body"><strong>{f.title}</strong>{f.desc}</div>
+                  </li>
+                ))}
+              </ul>
 
-              <div className="translated-block">
-                <p>
+              <a
+                href="/plain-speak-extension.zip"
+                className="download-btn reveal d3"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Download Extension
+              </a>
+            </div>
+
+            {/* Right — mockup */}
+            <div className="app-frame reveal d3">
+              <div className="app-titlebar">
+                <div className="tbar-dot" style={{ background: '#ff5f56' }} />
+                <div className="tbar-dot" style={{ background: '#ffbd2e' }} />
+                <div className="tbar-dot" style={{ background: '#27c93f' }} />
+                <span className="tbar-url">www.langchain.com</span>
+              </div>
+              <div className="app-body">
+                <div className="status-pill">
+                  <span className="status-dot" />
+                  Plain Speak AI — Page simplified ✓
+                </div>
+                <div className="original-block">
+                  <div className="label">Original</div>
+                  <p>
+                    <strong>&ldquo;</strong>LangSmith is an all-in-one developer platform for
+                    every step of the LLM-powered application lifecycle, whether you&rsquo;re
+                    building with LangChain or not.<strong>&rdquo;</strong>
+                  </p>
+                </div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '0.58rem', letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(91,155,213,0.55)', marginBottom: '0.5rem' }}>
+                  Simplicity Level
+                </div>
+                <div className="level-row">
+                  <div className="lv active">🧒 Child</div>
+                  <div className="lv">🙂 Simple</div>
+                  <div className="lv">📖 Learner</div>
+                </div>
+                <div className="translated">
                   LangSmith is a tool that helps builders make and fix their AI helpers.
                   You can watch them work, test them, and use what you already have.
-                </p>
-              </div>
-
-              <div style={{
-                marginTop: '1.25rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <span style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.58rem',
-                  color: 'rgba(74,158,255,0.4)',
-                  letterSpacing: '0.1em',
-                }}>
-                  GROQ API KEY ••••••••••••
-                </span>
-                <span style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '0.58rem',
-                  color: '#4ade80',
-                  letterSpacing: '0.1em',
-                }}>
-                  ✓ Key saved
-                </span>
-              </div>
-
-              <div style={{
-                marginTop: '1.25rem',
-                padding: '0.75rem',
-                border: '1px dashed rgba(74,158,255,0.15)',
-                borderRadius: '3px',
-                textAlign: 'center',
-              }}>
-                <a
-                  href="https://chromewebstore.google.com"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: '0.6rem',
-                    color: 'var(--blue)',
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none',
-                  }}
-                >
-                  ↗ Add to Chrome — Free
-                </a>
+                </div>
+                <div className="key-row">
+                  <span className="dim">GROQ API KEY ············</span>
+                  <span className="saved">✓ Key saved</span>
+                </div>
+                <a href="#" className="chrome-btn">↗ Add to Chrome — Free</a>
               </div>
             </div>
           </div>
@@ -445,116 +219,89 @@ export default function Home() {
 
       <div className="divider" />
 
-      {/* ═══════════════════════════════════════════
-          MARKET WATCHER
-      ══════════════════════════════════════════════ */}
+      {/* ═══════════ MARKET WATCHER ═══════════ */}
       <section id="markets" className="section market-section">
-        <div className="market-grid">
-          <div>
-            <div className="section-label reveal delay-1">Market Watcher</div>
-            <h2 className="section-title reveal delay-2">
-              The market runs<br />
-              <em>while you walk.</em>
-            </h2>
-            <p className="body-text reveal delay-2" style={{ marginTop: '1.75rem' }}>
-              Market Watcher is an AI engine that monitors gold, oil,
-              and major currencies around the clock — analysing momentum,
-              sentiment, and pattern — then executes positions on a MetaTrader 5
-              demo account with documented, auditable results.
-            </p>
-            <p className="body-text reveal delay-3" style={{ marginTop: '1rem' }}>
-              No overnight anxiety. No emotional triggers. Just signal, logic,
-              and a consistent methodology that compounds over time.
-            </p>
-
-            {/* Assets */}
-            <div className="asset-cards reveal delay-3">
-              <AssetRow icon="🥇" symbol="XAU/USD" name="Gold — Spot" change="+1.24%" isUp={true} />
-              <AssetRow icon="🛢️" symbol="WTI" name="Crude Oil" change="+0.87%" isUp={true} />
-              <AssetRow icon="💱" symbol="EUR/USD" name="Euro / US Dollar" change="-0.31%" isUp={false} />
-              <AssetRow icon="💹" symbol="GBP/JPY" name="Sterling / Yen" change="+0.55%" isUp={true} />
-              <AssetRow icon="📈" symbol="USD/KES" name="Dollar / Kenyan Shilling" change="-0.18%" isUp={false} />
-            </div>
-
-            <div className="mt5-badge">
-              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#4ade80', display: 'inline-block', animation: 'pulse 2s infinite' }} />
-              MT5 Demo Account — Live Execution
-            </div>
-          </div>
-
-          {/* Terminal */}
-          <div className="terminal-card reveal delay-2">
-            <div className="terminal-header">
-              <div className="terminal-dots">
-                <span />
-                <span />
-                <span />
+        <div className="section-inner">
+          <div className="two-col flip">
+            {/* Right — terminal + CSV (rendered left after flip) */}
+            <div>
+              <div className="terminal">
+                <div className="term-head">
+                  <div className="term-dots"><span /><span /><span /></div>
+                  <span className="term-label">market_watcher — direction log</span>
+                </div>
+                <div className="term-body">
+                  <span className="tl td">// ── 2026-05-21 04:17:09 UTC ──────────────</span>
+                  <span className="tl" style={{ marginTop: '0.6rem' }}><span className="tc">SCAN    </span><span className="tm">Running deep analysis on 52 instruments…</span></span>
+                  <span className="tl"><span className="tc">SIGNAL  </span><span className="tg">XAU/USD </span><span className="tm">Momentum divergence — RSI 28.4</span></span>
+                  <span className="tl"><span className="tc">MODEL   </span><span className="tm">Direction confidence: </span><span className="tgr">↑ 91.2% LONG</span></span>
+                  <span className="tl"><span className="tc">EXEC    </span><span className="tgr">BUY XAU/USD @ 3,312.80 — MT5 Demo</span></span>
+                  <span className="tl"><span className="tc">SL/TP   </span><span className="tm">3,298.00 / </span><span className="tg">3,344.00</span></span>
+                </div>
               </div>
-              <span className="terminal-title">market_watcher — execution log</span>
-            </div>
-            <div className="terminal-body">
-              <span className="t-line t-dim">// ── 2026-05-21 04:23:11 UTC ──────────────</span>
-              <span className="t-line" style={{ marginTop: '0.75rem' }}>
-                <span className="t-cmd">SCANNER </span>
-                <span className="t-muted">Checking 47 instruments...</span>
-              </span>
-              <span className="t-line">
-                <span className="t-cmd">SIGNAL  </span>
-                <span className="t-gold">XAU/USD </span>
-                <span className="t-muted">RSI divergence detected</span>
-              </span>
-              <span className="t-line">
-                <span className="t-cmd">AI      </span>
-                <span className="t-muted">Pattern confidence: </span>
-                <span className="t-green">87.3%</span>
-              </span>
-              <span className="t-line">
-                <span className="t-cmd">EXEC    </span>
-                <span className="t-green">BUY XAU/USD @ 3,312.40</span>
-              </span>
-              <span className="t-line">
-                <span className="t-cmd">SL/TP   </span>
-                <span className="t-muted">3,298.00 / </span>
-                <span className="t-gold">3,341.00</span>
-              </span>
 
-              <div style={{ margin: '1.25rem 0', borderTop: '1px solid rgba(74,158,255,0.08)' }} />
-
-              <span className="t-line t-dim">// ── Recent closed trades ──────────────────</span>
-              <div style={{ marginTop: '0.75rem' }}>
+              {/* CSV mock */}
+              <div className="csv-mock">
+                <div className="csv-head">
+                  <span>Date</span><span>Instrument</span><span>Direction</span><span>Result</span><span>P&amp;L</span>
+                </div>
                 {[
-                  { pair: 'WTI    ', dir: 'LONG ', pnl: '+$127.40', win: true },
-                  { pair: 'EUR/USD', dir: 'SHORT', pnl: '+$84.20', win: true },
-                  { pair: 'GBP/JPY', dir: 'LONG ', pnl: '+$211.80', win: true },
-                  { pair: 'USD/KES', dir: 'SHORT', pnl: '-$32.60', win: false },
-                  { pair: 'XAU/USD', dir: 'LONG ', pnl: '+$340.00', win: true },
-                ].map((trade, i) => (
-                  <div key={i} className="trade-row">
-                    <span className="t-gold">{trade.pair}</span>
-                    <span className="t-dim">{trade.dir}</span>
-                    <span className={trade.win ? 't-green' : 't-red'}>{trade.pnl}</span>
+                  { date: '21 May', sym: 'XAU/USD', dir: '↑ Long',  res: 'WIN',  pnl: '+$340', w: true },
+                  { date: '20 May', sym: 'WTI',     dir: '↑ Long',  res: 'WIN',  pnl: '+$127', w: true },
+                  { date: '20 May', sym: 'EUR/USD',  dir: '↓ Short', res: 'WIN',  pnl: '+$84',  w: true },
+                  { date: '19 May', sym: 'GBP/JPY', dir: '↑ Long',  res: 'WIN',  pnl: '+$211', w: true },
+                  { date: '19 May', sym: 'DXY',     dir: '↓ Short', res: 'LOSS', pnl: '-$32',  w: false },
+                  { date: '18 May', sym: 'XAU/USD', dir: '↑ Long',  res: 'WIN',  pnl: '+$290', w: true },
+                  { date: '18 May', sym: 'USOIL',   dir: '↑ Long',  res: 'WIN',  pnl: '+$165', w: true },
+                ].map((r, i) => (
+                  <div key={i} className="csv-row">
+                    <span style={{ color: 'var(--text-faint)', fontSize: '0.6rem' }}>{r.date}</span>
+                    <span className="sym">{r.sym}</span>
+                    <span style={{ color: r.w ? '#4ade80' : '#f87171', fontSize: '0.65rem' }}>{r.dir}</span>
+                    <span className={r.w ? 'win' : 'loss'}>{r.res}</span>
+                    <span className={r.w ? 'win' : 'loss'}>{r.pnl}</span>
                   </div>
                 ))}
               </div>
 
-              <div style={{ margin: '1.25rem 0', borderTop: '1px solid rgba(74,158,255,0.08)' }} />
+              <div className="mt5-tag">
+                <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#4ade80', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+                MT5 Demo Account — Live Execution Track Record
+              </div>
+            </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span className="t-dim">Win rate (30d)</span>
-                <span className="t-green">78.4%</span>
+            {/* Left — copy */}
+            <div>
+              <div className="eyebrow eyebrow-gold reveal d1">
+                <span className="eyebrow-line" style={{ background: 'var(--gold)' }} />
+                Market Watcher
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem' }}>
-                <span className="t-dim">Net P&L (demo)</span>
-                <span className="t-green">+$4,820.00</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.3rem' }}>
-                <span className="t-dim">Account</span>
-                <span className="t-muted">MT5 Demo #38820</span>
-              </div>
+              <h2 className="display-serif reveal d2" style={{ fontSize: 'clamp(2.8rem, 5.5vw, 5rem)', color: 'var(--text)' }}>
+                The market runs<br />
+                <em style={{ color: 'var(--gold)' }}>while you walk.</em>
+              </h2>
+              <p className="body-prose reveal d2" style={{ marginTop: '1.75rem' }}>
+                Market Watcher is an AI engine that monitors high-liquidity assets —{' '}
+                <strong>Gold, Euro/USD, Oil, and the DXY index</strong> — around the clock.
+                It runs deep predictive analysis to pinpoint direction (up or down), then
+                automatically executes algorithmic trades on a MetaTrader 5 demo account
+                with a fully transparent, auditable track record.
+              </p>
+              <p className="body-prose reveal d3" style={{ marginTop: '1rem' }}>
+                No overnight anxiety. No emotional triggers. Signal, logic, and a consistent
+                methodology that compounds over time — provably.
+              </p>
 
-              <div style={{ marginTop: '1.5rem' }}>
-                <span className="t-dim">// Interested in live results? </span>
-                <span className="t-gold">→ Connect below</span>
+              {/* Asset table */}
+              <div className="asset-table reveal d3">
+                <div className="asset-head">
+                  <span></span><span>Instrument</span><span>Price</span><span>Change</span>
+                </div>
+                <Asset icon="🥇" sym="XAU/USD"  name="Gold — Spot"           price="3,312.40" change="1.24%" up />
+                <Asset icon="💱" sym="EUR/USD"  name="Euro / US Dollar"       price="1.0842"   change="0.31%" up={false} />
+                <Asset icon="🛢️" sym="WTI"      name="Crude Oil"              price="78.64"    change="0.87%" up />
+                <Asset icon="📊" sym="DXY"      name="US Dollar Index"        price="104.32"   change="0.19%" up />
+                <Asset icon="💹" sym="GBP/JPY"  name="Sterling / Yen"         price="196.44"   change="0.55%" up />
               </div>
             </div>
           </div>
@@ -563,67 +310,171 @@ export default function Home() {
 
       <div className="divider" />
 
-      {/* ═══════════════════════════════════════════
-          CONTACT
-      ══════════════════════════════════════════════ */}
+      {/* ═══════════ AUTOMATION COMPANION ═══════════ */}
+      <section id="automation" className="section auto-section">
+        <div className="section-inner">
+          <div className="eyebrow eyebrow-gold reveal d1">
+            <span className="eyebrow-line" style={{ background: 'var(--gold)' }} />
+            The Automation Companion
+          </div>
+          <h2 className="display-serif reveal d2" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: 'var(--text)', maxWidth: '680px' }}>
+            Technology as a<br />
+            <em style={{ color: 'var(--gold)' }}>walking partner.</em>
+          </h2>
+
+          <div className="companion-quote reveal d2">
+            &ldquo;Walking alongside my dogs helped me see that AI is just another companion —
+            and <em>how you use it actually matters.</em>&rdquo;
+          </div>
+
+          <div className="auto-cards">
+            <div className="auto-card reveal d2">
+              <div className="auto-card-icon">⚙️</div>
+              <h4>AI Worker Systems</h4>
+              <p>
+                Orchestrating agentic, multi-agent flows to handle heavy business data, simplify
+                complex tasks, and run entire workflows in the background — while the principal
+                stays focused on what only they can do.
+              </p>
+            </div>
+            <div className="auto-card reveal d3">
+              <div className="auto-card-icon">🎯</div>
+              <h4>Intent-Driven Lead Generation</h4>
+              <p>
+                An automated system that extracts YouTube comments, runs AI sentiment analysis,
+                and pinpoints users expressing explicit buying intent — asking for contractors,
+                materials, or builders — routing those hot leads directly to businesses to close.
+              </p>
+            </div>
+            <div className="auto-card reveal d2">
+              <div className="auto-card-icon">🔄</div>
+              <h4>Background Automation</h4>
+              <p>
+                Repetitive data handling, reporting, and communication flows handed off entirely
+                to autonomous agents. The work continues without supervision — reliable,
+                consistent, always on.
+              </p>
+            </div>
+            <div className="auto-card reveal d3">
+              <div className="auto-card-icon">🧠</div>
+              <h4>Human-Centred Design</h4>
+              <p>
+                Every system is built to surface the right information at the right moment —
+                not to overwhelm, but to clarify. The companion metaphor isn&rsquo;t decorative;
+                it&rsquo;s the design principle.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" />
+
+      {/* ═══════════ SCURO ═══════════ */}
+      <section id="scuro" className="section scuro-section">
+        <div className="section-inner">
+          <div className="eyebrow eyebrow-gold reveal d1">
+            <span className="eyebrow-line" style={{ background: 'var(--gold)' }} />
+            Scuro Walks
+          </div>
+          <h2 className="display-serif reveal d2" style={{ fontSize: 'clamp(2.8rem, 5.5vw, 5rem)', color: 'var(--text)' }}>
+            Stories automated<br />
+            <em style={{ color: 'var(--gold)' }}>by the land itself.</em>
+          </h2>
+
+          <div className="scuro-story reveal d2">
+            <p>
+              It began on the open land and winding roads, walking alongside my dogs. To capture
+              the spirit of these moments, I began using AI not to replace the human element —
+              <strong> but to perfect the story.</strong> I built systems where AI analyses raw
+              scenes, suggests the most impactful cinematic cuts, refines the narrative arc, and
+              auto-schedules the posts.
+            </p>
+            <p>
+              The result went far beyond data. It became a{' '}
+              <strong>deeply shared human experience.</strong> A community emerged — people stepped
+              away from their screens to touch the earth. Even local children joined the walks,
+              eager to learn about the nature around them and engage with the dogs.
+              <strong> Technology bridged the gap back to the real world.</strong>
+            </p>
+          </div>
+
+          {/* Video preview cards */}
+          <div className="video-grid">
+            <div className="reveal d2">
+              <VideoCard
+                href={TT_LINK_1}
+                bgClass="vc-bg-1"
+                caption="Permission to be lost — open land, open mind."
+              />
+            </div>
+            <div className="reveal d3">
+              <VideoCard
+                href={TT_LINK_2}
+                bgClass="vc-bg-2"
+                caption="River walk series — returning to nature."
+              />
+            </div>
+          </div>
+
+          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <a
+              href="https://www.tiktok.com/@scurowalks"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: '0.62rem',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: 'var(--text-faint)',
+                textDecoration: 'none',
+                transition: 'color 0.3s',
+              }}
+              onMouseEnter={e => e.target.style.color = 'var(--gold)'}
+              onMouseLeave={e => e.target.style.color = 'var(--text-faint)'}
+            >
+              ↗ View all walks @scurowalks
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <div className="divider" />
+
+      {/* ═══════════ CONTACT ═══════════ */}
       <section id="contact" className="contact-section">
         <h2 className="contact-title reveal">
           Let&rsquo;s talk<br />
-          <em>the human way.</em>
+          the human way.
         </h2>
-        <p className="contact-sub reveal delay-2">
-          No forms. No email threads. If you&rsquo;re curious about Scuro,
-          Plain Speak, the Market Watcher, or just want to share what your
-          morning walk looked like — reach out directly.
+        <p className="contact-ask reveal d2">Will you join me on this journey?</p>
+        <p className="contact-sub reveal d2">
+          No forms. No cold threads. If any of this resonates — the walks, the tools,
+          the vision — reach out directly. Warm, personal, and immediate.
         </p>
 
-        <div className="contact-methods reveal delay-3">
-          <a
-            href={`https://wa.me/${PHONE.replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noreferrer"
-            className="contact-btn primary"
-          >
-            <span>💬</span>
-            WhatsApp
+        <div className="contact-btns reveal d3">
+          <a href={`https://wa.me/${WA_NUM}`} target="_blank" rel="noreferrer" className="cbtn prime">
+            💬 WhatsApp
           </a>
-          <a
-            href={`sms:${PHONE}`}
-            className="contact-btn"
-          >
-            <span>📱</span>
-            Text / SMS
-          </a>
-          <a
-            href={`facetime:${PHONE}`}
-            className="contact-btn"
-          >
-            <span>📹</span>
-            FaceTime
-          </a>
-          <a
-            href="https://www.tiktok.com/@scurowalks"
-            target="_blank"
-            rel="noreferrer"
-            className="contact-btn"
-          >
-            <span>↗</span>
-            @scurowalks
+          <a href={`sms:${PHONE}`} className="cbtn">📱 Text / SMS</a>
+          <a href={`facetime:${PHONE}`} className="cbtn">📹 FaceTime</a>
+          <a href="https://www.tiktok.com/@scurowalks" target="_blank" rel="noreferrer" className="cbtn">
+            ↗ @scurowalks
           </a>
         </div>
 
-        <p className="contact-note reveal delay-4">
-          Based in Ongata Rongai, Kenya &nbsp;·&nbsp; East Africa Time (EAT, UTC+3)
+        <p className="contact-tz reveal d4">
+          Ongata Rongai, Kenya &nbsp;·&nbsp; East Africa Time — UTC+3
         </p>
       </section>
 
-      {/* ═══════════════════════════════════════════
-          FOOTER
-      ══════════════════════════════════════════════ */}
+      {/* ═══════════ FOOTER ═══════════ */}
       <footer>
-        <p>© 2026 Scuro — All rights reserved</p>
+        <p>© 2026 Griffin / Scuro</p>
         <p>Field Notes from the Edge of Code &amp; Country</p>
-        <p>Built with Next.js · Deployed on Vercel</p>
+        <p>Next.js · Vercel</p>
       </footer>
     </>
   );
