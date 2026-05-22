@@ -508,14 +508,14 @@ export default function Home() {
           </div>
           <div className="vid-grid">
             <div className="reveal d2">
-              <VideoCard
+              <TikTokCard
                 href={TT_1}
                 cap="Permission to be lost — open land, open mind."
                 bgStyle={{ background: 'radial-gradient(ellipse 80% 65% at 42% 45%, #0f2810 0%, #0a1c0b 35%, #061008 68%, #020604 100%)' }}
               />
             </div>
             <div className="reveal d3">
-              <VideoCard
+              <TikTokCard
                 href={TT_2}
                 cap="River walk series — returning to nature is the best way to find peace."
                 bgStyle={{ background: 'radial-gradient(ellipse 75% 70% at 58% 42%, #122e0e 0%, #0c2009 38%, #06100a 70%, #020604 100%)' }}
