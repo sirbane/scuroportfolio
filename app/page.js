@@ -1,4 +1,3 @@
-
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -56,7 +55,6 @@ function Eyebrow({ label, variant = 'gold' }) {
   );
 }
 
-// Fixed Asset component signature mapping to items loop
 function Asset({ icon, sym, name, price, change, up }) {
   return (
     <div className="a-row">
@@ -208,7 +206,7 @@ export default function Home() {
       {/* ════════ HERO ════════ */}
       <section id="top" className="hero">
         <div className="hero-bg" />
-        {/* Left */}
+        {/* Left column */}
         <div className="hero-left">
           <div className="hero-greeting reveal d1">Hello. Welcome in.</div>
           <h1 className="hero-title reveal d2">
@@ -225,19 +223,21 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Right — photo */}
+        {/* Right column — structural fix for aspect ratio view */}
         <div className="hero-right">
-          <div className="photo-frame reveal d3">
+          <div className="photo-frame reveal d3" style={{ width: '100%', maxWidth: '420px' }}>
             <div className="photo-frame-border-2" />
             <div className="photo-frame-border" />
-            <Image
-              src="/griffin.jpg"
-              alt="Griffin"
-              width={380}
-              height={507}
-              style={{ width: '100%', height: 'auto', borderRadius: '2px', filter: 'contrast(1.05) brightness(0.92)' }}
-              priority
-            />
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '380/507', overflow: 'hidden' }}>
+              <Image
+                src="/griffin.jpg"
+                alt="Griffin"
+                fill
+                sizes="(max-width: 960px) 100vw, 420px"
+                style={{ objectFit: 'cover', borderRadius: '2px', filter: 'contrast(1.05) brightness(0.92)' }}
+                priority
+              />
+            </div>
             <div className="photo-frame-label">Griffin · Builder & Walker</div>
           </div>
         </div>
@@ -294,7 +294,6 @@ export default function Home() {
       <section id="plainspeak" className="pg-section" style={{ background: 'var(--bg)' }}>
         <div className="pg-inner">
           <div className="two-col">
-            {/* Copy */}
             <div>
               <div className="eyebrow ey-blue reveal d1">
                 <span className="ey-line" style={{ background: 'var(--blue)' }} />
@@ -328,7 +327,7 @@ export default function Home() {
                 Download Extension
               </a>
             </div>
-            {/* App frame */}
+            
             <div className="app-frame reveal d3">
               <div className="app-titlebar">
                 <div className="tbar-dot" style={{ background: '#ff5f56' }} />
@@ -366,7 +365,6 @@ export default function Home() {
       <section id="markets" className="pg-section market-section">
         <div className="pg-inner">
           <div className="two-col flip">
-            {/* Visuals (renders left after flip) */}
             <div>
               <div className="terminal reveal d2">
                 <div className="term-head">
@@ -405,7 +403,6 @@ export default function Home() {
               <div className="mt5-tag reveal d3"><span className="mt5-dot" />MT5 Demo Account — Live Execution Track Record</div>
             </div>
 
-            {/* Copy */}
             <div>
               <Eyebrow label="Market Watcher" />
               <h2 className="d-serif reveal d2" style={{ fontSize: 'clamp(2.6rem,5.5vw,5rem)', color: 'var(--text)' }}>
@@ -599,7 +596,7 @@ export default function Home() {
         <p className="contact-ask reveal d2">Will you join me on this journey?</p>
         <p className="contact-sub reveal d2">
           No forms. No cold threads. If any of this resonates — reach out directly.
-          Warm, personal, and immediate.\
+          Warm, personal, and immediate.
         </p>
         <div className="contact-btns reveal d3">
           <a href={`https://wa.me/${WA_NUM}`} target="_blank" rel="noreferrer" className="cbtn prime">💬 WhatsApp</a>
@@ -618,4 +615,3 @@ export default function Home() {
     </>
   );
 }
-
