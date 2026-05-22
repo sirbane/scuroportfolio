@@ -69,7 +69,6 @@ function Asset({ icon, sym, name, price, change, up }) {
   );
 }
 
-// Add this component to app/page.js (or a components folder)
 function TikTokCard({ videoUrl }) {
   const [meta, setMeta] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,46 +95,54 @@ function TikTokCard({ videoUrl }) {
       href={videoUrl} 
       target="_blank" 
       rel="noreferrer" 
-      className="scuro-card reveal" // Keeps your existing CSS styles
+      className="reveal" // Removed 'scuro-card' to stop old CSS styles from warping the shape
       style={{ 
-        display: 'block', 
+        display: 'flex', 
+        flexDirection: 'column',
+        justifyContent: 'end',
         position: 'relative', 
         overflow: 'hidden',
-        aspectRatio: '9 / 16', // Forces the card container to match the TikTok video shape
         width: '100%',
-        background: '#000' // Black background letters for any letterboxing spaces
+        maxWidth: '340px',       // Limits width so it doesn't get comically huge on desktop
+        aspectRatio: '9 / 16',   // Forces the strict 9:16 portrait container
+        borderRadius: '4px',
+        backgroundColor: '#0a0a0a',
+        border: '1px solid var(--border, #222)',
+        margin: '0 auto'         // Centers the cards in their grid tracks
       }}
     >
-      {/* Renders the entire thumbnail without cropping it */}
+      {/* The full thumbnail image filling the 9:16 frame natively */}
       {meta?.thumbnail_url && (
         <Image
           src={meta.thumbnail_url}
           alt={meta.title || "TikTok Walk"}
           fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          style={{ objectFit: 'contain', zIndex: 0 }} // Changed 'cover' to 'contain'
-          className="transition-opacity duration-500 opacity-90 hover:opacity-100" // Elevated opacity to see the full thumb clearly
+          sizes="(max-width: 768px) 100vw, 340px"
+          style={{ objectFit: 'cover', zIndex: 0 }} // 'cover' works perfectly now because the container itself is exactly 9:16!
+          className="transition-opacity duration-500 opacity-70 hover:opacity-90"
         />
       )}
 
-      {/* Content overlay container to preserve your text layout */}
+      {/* Dark gradient base overlay to guarantee text readability over the image */}
       <div 
         style={{ 
           position: 'absolute', 
-          bottom: 0, 
-          left: 0, 
-          right: 0, 
-          zIndex: 1, 
-          padding: '1.5rem',
-          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)' // Soft dark gradient only at the bottom for readability
-        }}
-      >
+          inset: 0, 
+          background: 'linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%)',
+          zIndex: 1 
+        }} 
+      />
+
+      {/* Content overlay */}
+      <div style={{ position: 'relative', zIndex: 2, padding: '1.5rem', width: '100%' }}>
         {loading ? (
-          <p className="text-faint">Fetching landscape...</p>
+          <p className="text-faint" style={{ margin: 0, fontSize: '0.85rem' }}>Fetching landscape...</p>
         ) : (
           <>
-            <p className="card-tag" style={{ color: 'var(--gold)', margin: 0 }}>WALK ASSET</p>
-            <h3 className="card-title" style={{ margin: '0.25rem 0 0 0', color: '#fff' }}>{meta?.title || "Field Note"}</h3>
+            <p className="card-tag" style={{ color: 'var(--gold, #d4af37)', margin: 0, fontSize: '0.75rem', letterSpacing: '0.1em' }}>WALK ASSET</p>
+            <h3 className="card-title" style={{ margin: '0.4rem 0 0 0', color: '#fff', fontSize: '1.1rem', fontWeight: 500, lineHeight: 1.4 }}>
+              {meta?.title || "Field Note"}
+            </h3>
           </>
         )}
       </div>
@@ -586,14 +593,14 @@ export default function Home() {
           
           <div className="vid-grid">
             <div className="reveal d2">
-              <VideoCard
+              <TikTokCard
                 href={TT_1}
                 cap="Permission to be lost — open land, open mind."
                 bgStyle={{ background: 'radial-gradient(ellipse 80% 65% at 42% 45%, #0f2810 0%, #0a1c0b 35%, #061008 68%, #020604 100%)' }}
               />
             </div>
             <div className="reveal d3">
-              <VideoCard
+              <TikTokCard
                 href={TT_2}
                 cap="River walk series — returning to nature is the best way to find peace."
                 bgStyle={{ background: 'radial-gradient(ellipse 75% 70% at 58% 42%, #122e0e 0%, #0c2009 38%, #06100a 70%, #020604 100%)' }}
