@@ -2,19 +2,12 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
-<<<<<<< HEAD
 /* ── constants ─────────────────────────────────────── */
 const PHONE   = '+254105978871';
-const WA_NUM  = PHONE.replace(/\D/g, '');
+const WA_NUM  = '+254105978871';
 const TT_1    = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
 const TT_2    = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
 const TT_MAIN = 'https://www.tiktok.com/@scurowalks';
-=======
-const PHONE     = '+254105978871'; // ← replace with real number
-const WA_NUM    = PHONE.replace(/\D/g, '');
-const TT_LINK_1 = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
-const TT_LINK_2 = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
->>>>>>> 9c404b5eba8a69580195fd58cb3947a321e7800c
 
 /* ── scroll reveal ──────────────────────────────────── */
 function useReveal() {
@@ -67,10 +60,10 @@ function Asset({ icon, sym, name, price, change, up }) {
   );
 }
 
-function VideoCard({ href, cap, bg }) {
+function VideoCard({ href, cap, bgStyle }) {
   return (
     <a className="vid-card" href={href} target="_blank" rel="noreferrer">
-      <div className={`vc-bg ${bg}`} />
+      <div className="vc-bg" style={bgStyle} />
       <div className="vc-detail" />
       <div className="vc-vignette" />
       <div className="vc-overlay" />
@@ -122,29 +115,20 @@ export default function Home() {
       {/* ════════ HERO ════════ */}
       <section id="top" className="hero">
         <div className="hero-bg" />
-        <div className="hero-coord">1.2921° S, 36.8219° E — Ongata Rongai, Kenya</div>
-
-<<<<<<< HEAD
         {/* Left */}
         <div className="hero-left">
-          <div className="hero-greeting reveal d1">Hello, Mr. Garrett. Welcome.</div>
-=======
-        <div style={{ position: 'relative', zIndex: 1 }}>
-          <div className="hero-greeting reveal d1">
-            Hello, Welcome to Griffin's Portfolio.
-          </div>
->>>>>>> 9c404b5eba8a69580195fd58cb3947a321e7800c
+          <div className="hero-greeting reveal d1">Hello. Welcome in.</div>
           <h1 className="hero-title reveal d2">
             Walking slow<br />
             in a world that<br />
             won&rsquo;t stop.
           </h1>
           <p className="hero-body reveal d3">
-            This is a space prepared especially for you by <strong>Griffin.</strong> Over the
-            past four years, Griffin has been exploring how technology can feel less like a
-            rigid machine and more like an organic human partnership. This portfolio is a look
-            at that journey — showing exactly how he uses AI to simplify the world, and how
-            that same approach can bring real value to the work you do together.
+            Over the past four years, <strong>Griffin</strong> has been exploring how technology
+            can feel less like a rigid machine and more like an organic human partnership. This
+            portfolio is a look at that journey — showing exactly how AI is used to simplify the
+            world, and how that same approach can bring real, measurable value to the right
+            collaboration.
           </p>
         </div>
 
@@ -161,7 +145,7 @@ export default function Home() {
               style={{ width: '100%', height: 'auto', borderRadius: '2px', filter: 'contrast(1.05) brightness(0.92)' }}
               priority
             />
-            <div className="photo-frame-label">Griffin · Ongata Rongai, Kenya</div>
+            <div className="photo-frame-label">Griffin · Builder & Walker</div>
           </div>
         </div>
 
@@ -244,17 +228,8 @@ export default function Home() {
                   <li key={i} className="reveal"><span className="feat-arrow">→</span><div className="feat-text"><strong>{f.t}</strong>{f.d}</div></li>
                 ))}
               </ul>
-<<<<<<< HEAD
               <a href="/plain-speak-extension.zip" className="dl-btn reveal d3">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-=======
-
-              <a
-                href="https://scurrro.gumroad.com/l/ilmzh"
-                className="download-btn reveal d3"
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
->>>>>>> 9c404b5eba8a69580195fd58cb3947a321e7800c
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 Download Extension
@@ -456,6 +431,18 @@ export default function Home() {
                   <strong style={{ color: 'var(--text)' }}> fully queryable in under 10 minutes.</strong>
                 </p>
               </div>
+              <a
+                href="https://5minclips.streamlit.app/"
+                target="_blank"
+                rel="noreferrer"
+                className="dl-btn reveal d4"
+                style={{ marginTop: '1.75rem' }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Open 5MinClips App
+              </a>
             </div>
           </div>
         </div>
@@ -473,7 +460,7 @@ export default function Home() {
           </h2>
           <div className="scuro-narrative reveal d2">
             <p>
-              It began on the open land and winding roads of Ongata Rongai, walking alongside
+              It began on the open land and winding country roads, walking alongside
               the dogs. To capture the spirit of these moments, custom AI pipelines were introduced
               not to replace the human element — <strong>but to perfectly refine the story.</strong>{' '}
               Systems now analyse raw scenes, suggest cinematic transitions, shape the narrative
@@ -489,10 +476,18 @@ export default function Home() {
           </div>
           <div className="vid-grid">
             <div className="reveal d2">
-              <VideoCard href={TT_1} cap="Permission to be lost — open land, open mind." bg="" />
+              <VideoCard
+                href={TT_1}
+                cap="Permission to be lost — open land, open mind."
+                bgStyle={{ background: 'radial-gradient(ellipse 80% 65% at 42% 45%, #0f2810 0%, #0a1c0b 35%, #061008 68%, #020604 100%)' }}
+              />
             </div>
             <div className="reveal d3">
-              <VideoCard href={TT_2} cap="River walk series — returning to nature is the best way to find peace." bg="vc-bg-2" />
+              <VideoCard
+                href={TT_2}
+                cap="River walk series — returning to nature is the best way to find peace."
+                bgStyle={{ background: 'radial-gradient(ellipse 75% 70% at 58% 42%, #122e0e 0%, #0c2009 38%, #06100a 70%, #020604 100%)' }}
+              />
             </div>
           </div>
           <div className="scuro-cta reveal d3">
@@ -517,7 +512,7 @@ export default function Home() {
           <a href={`facetime:${PHONE}`} className="cbtn">📹 FaceTime</a>
           <a href={TT_MAIN} target="_blank" rel="noreferrer" className="cbtn">↗ @scurowalks</a>
         </div>
-        <p className="contact-tz reveal d4">Ongata Rongai, Kenya &nbsp;·&nbsp; East Africa Time — UTC+3</p>
+        <p className="contact-tz reveal d4">Available via WhatsApp · Text · FaceTime</p>
       </section>
 
       {/* ════════ FOOTER ════════ */}

@@ -340,10 +340,8 @@ body::before {
 .vid-card:hover .vc-play { transform: translate(-50%,-50%) scale(1.1); }
 .vc-bg {
   position: absolute; inset: 0;
-  background: radial-gradient(ellipse 75% 60% at 45% 42%, #0f2810 0%, #0a1b0b 38%, #060e07 70%, #020502 100%);
-}
-.vc-bg-2 {
-  background: radial-gradient(ellipse 70% 65% at 55% 40%, #112c0e 0%, #0c1f0a 40%, #060d06 72%, #020502 100%);
+  background-color: #071208;
+  /* fallback solid; actual gradient set via inline style prop */
 }
 .vc-detail {
   position: absolute; inset: 0;
