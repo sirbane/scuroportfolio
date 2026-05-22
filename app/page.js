@@ -69,11 +69,13 @@ function Asset({ icon, sym, name, price, change, up }) {
   );
 }
 
-function TikTokCard({ videoUrl }) {
+/* ── Fix: Added unoptimized fallback to bypass strict domain errors if needed ── */
+function TikTokCard({ videoUrl, cap }) {
   const [meta, setMeta] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!videoUrl) return;
     async function fetchThumbnail() {
       try {
         const res = await fetch(`/api/tiktok?url=${encodeURIComponent(videoUrl)}`);
@@ -95,7 +97,7 @@ function TikTokCard({ videoUrl }) {
       href={videoUrl} 
       target="_blank" 
       rel="noreferrer" 
-      className="reveal" // Removed 'scuro-card' to stop old CSS styles from warping the shape
+      className="reveal"
       style={{ 
         display: 'flex', 
         flexDirection: 'column',
@@ -103,45 +105,46 @@ function TikTokCard({ videoUrl }) {
         position: 'relative', 
         overflow: 'hidden',
         width: '100%',
-        maxWidth: '340px',       // Limits width so it doesn't get comically huge on desktop
-        aspectRatio: '9 / 16',   // Forces the strict 9:16 portrait container
+        maxWidth: '340px',
+        aspectRatio: '9 / 16', 
         borderRadius: '4px',
-        backgroundColor: '#0a0a0a',
-        border: '1px solid var(--border, #222)',
-        margin: '0 auto'         // Centers the cards in their grid tracks
+        backgroundColor: '#0d120e',
+        border: '1px solid var(--border, rgba(237,233,224,0.07))',
+        margin: '0 auto'
       }}
     >
-      {/* The full thumbnail image filling the 9:16 frame natively */}
+      {/* Thumbnail Layer */}
       {meta?.thumbnail_url && (
         <Image
           src={meta.thumbnail_url}
           alt={meta.title || "TikTok Walk"}
           fill
+          unoptimized // Prevents image domain blocking strings from hiding the asset thumb
           sizes="(max-width: 768px) 100vw, 340px"
-          style={{ objectFit: 'cover', zIndex: 0 }} // 'cover' works perfectly now because the container itself is exactly 9:16!
-          className="transition-opacity duration-500 opacity-70 hover:opacity-90"
+          style={{ objectFit: 'cover', zIndex: 0 }} 
+          className="transition-opacity duration-500 opacity-70 hover:opacity-95"
         />
       )}
 
-      {/* Dark gradient base overlay to guarantee text readability over the image */}
+      {/* Text Backdrop Gradient */}
       <div 
         style={{ 
           position: 'absolute', 
           inset: 0, 
-          background: 'linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%)',
+          background: 'linear-gradient(to top, rgba(11, 15, 12, 0.95) 0%, rgba(11, 15, 12, 0.3) 50%, transparent 100%)',
           zIndex: 1 
         }} 
       />
 
-      {/* Content overlay */}
+      {/* Content Container */}
       <div style={{ position: 'relative', zIndex: 2, padding: '1.5rem', width: '100%' }}>
         {loading ? (
           <p className="text-faint" style={{ margin: 0, fontSize: '0.85rem' }}>Fetching landscape...</p>
         ) : (
           <>
-            <p className="card-tag" style={{ color: 'var(--gold, #d4af37)', margin: 0, fontSize: '0.75rem', letterSpacing: '0.1em' }}>WALK ASSET</p>
-            <h3 className="card-title" style={{ margin: '0.4rem 0 0 0', color: '#fff', fontSize: '1.1rem', fontWeight: 500, lineHeight: 1.4 }}>
-              {meta?.title || "Field Note"}
+            <p className="card-tag" style={{ color: 'var(--gold, #c4a45a)', margin: 0, fontSize: '0.75rem', letterSpacing: '0.12em' }}>WALK ASSET</p>
+            <h3 className="card-title" style={{ margin: '0.4rem 0 0 0', color: '#ede9e0', fontSize: '1.05rem', fontWeight: 400, lineHeight: 1.4 }}>
+              {cap || meta?.title || "Field Note"}
             </h3>
           </>
         )}
@@ -184,6 +187,7 @@ function VideoCard({ href, cap, bgStyle }) {
           src={meta.thumbnail_url}
           alt={meta.title || "Walk Cinematic"}
           fill
+          unoptimized
           sizes="(max-width: 768px) 100vw, 50vw"
           style={{ objectFit: 'cover', zIndex: 0 }}
           className="transition-opacity duration-500 opacity-40 hover:opacity-70"
@@ -232,7 +236,6 @@ export default function Home() {
       {/* ════════ HERO ════════ */}
       <section id="top" className="hero">
         <div className="hero-bg" />
-        {/* Left column */}
         <div className="hero-left">
           <div className="hero-greeting reveal d1">Hello. Welcome in.</div>
           <h1 className="hero-title reveal d2">
@@ -249,7 +252,6 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Right column — structural fix for aspect ratio view */}
         <div className="hero-right">
           <div className="photo-frame reveal d3" style={{ width: '100%', maxWidth: '420px' }}>
             <div className="photo-frame-border-2" />
@@ -448,10 +450,10 @@ export default function Home() {
               </p>
               <div className="asset-table reveal d3">
                 <div className="a-head"><span></span><span>Instrument</span><span>Price</span><span>24h</span></div>
-                <Asset icon="🥇" sym="XAU/USD"  name="Gold — Spot"        price="3,312.40" change="1.24%" up />
+                <Asset icon="🥇" sym="XAU/USD"  name="Gold — Spot"      price="3,312.40" change="1.24%" up />
                 <Asset icon="💱" sym="EUR/USD"  name="Euro / US Dollar"   price="1.0842"   change="0.31%" up={false} />
                 <Asset icon="🛢️" sym="WTI"      name="Crude Oil"          price="78.64"    change="0.87%" up />
-                <Asset icon="📊" sym="DXY"      name="US Dollar Index"    price="104.32"   change="0.19%" up />
+                <Asset icon="📊" sym="DXY"      name="US Dollar Index"     price="104.32"   change="0.19%" up />
                 <Asset icon="💹" sym="GBP/JPY"  name="Sterling / Yen"     price="196.44"   change="0.55%" up />
               </div>
             </div>
@@ -566,7 +568,7 @@ export default function Home() {
 
       <div className="divider" />
 
-      {/* ════════ SCURO ════════ */}
+      {/* ════════ SCURO STREAMS (FIXED GRID AND PROPS) ════════ */}
       <section id="scuro" className="pg-section scuro-section">
         <div className="pg-inner">
           <Eyebrow label="Scuro Walks" />
@@ -591,24 +593,23 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="vid-grid">
-            <div className="reveal d2">
+          {/* Fix: Wrapped inside a beautiful flexible grid frame forcing vertical alignments side-by-side */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2.5rem', marginTop: '3.5rem', width: '100%' }}>
+            <div className="reveal d2" style={{ display: 'flex', justifyContent: 'center' }}>
               <TikTokCard
-                href={TT_1}
+                videoUrl={TT_1}
                 cap="Permission to be lost — open land, open mind."
-                bgStyle={{ background: 'radial-gradient(ellipse 80% 65% at 42% 45%, #0f2810 0%, #0a1c0b 35%, #061008 68%, #020604 100%)' }}
               />
             </div>
-            <div className="reveal d3">
+            <div className="reveal d3" style={{ display: 'flex', justifyContent: 'center' }}>
               <TikTokCard
-                href={TT_2}
+                videoUrl={TT_2}
                 cap="River walk series — returning to nature is the best way to find peace."
-                bgStyle={{ background: 'radial-gradient(ellipse 75% 70% at 58% 42%, #122e0e 0%, #0c2009 38%, #06100a 70%, #020604 100%)' }}
               />
             </div>
           </div>
           
-          <div className="scuro-cta reveal d3">
+          <div className="scuro-cta reveal d3" style={{ marginTop: '3.5rem' }}>
             <a href={TT_MAIN} target="_blank" rel="noreferrer">↗ View all walks @scurowalks</a>
           </div>
         </div>
