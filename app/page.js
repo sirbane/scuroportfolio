@@ -321,7 +321,7 @@ export default function Home() {
                   <li key={i} className="reveal"><span className="feat-arrow">→</span><div className="feat-text"><strong>{f.t}</strong>{f.d}</div></li>
                 ))}
               </ul>
-              <a href="/plain-speak-extension.zip" className="dl-btn reveal d3">
+              <a href="https://scurrro.gumroad.com/l/ilmzh" className="dl-btn reveal d3">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -604,7 +604,6 @@ export default function Home() {
         <div className="contact-btns reveal d3">
           <a href={`https://wa.me/${WA_NUM}`} target="_blank" rel="noreferrer" className="cbtn prime">💬 WhatsApp</a>
           <a href={`sms:${PHONE}`} className="cbtn">📱 Text / SMS</a>
-          <a href={`facetime:${PHONE}`} className="cbtn">📹 FaceTime</a>
           <a href={TT_MAIN} target="_blank" rel="noreferrer" className="cbtn">↗ @scurowalks</a>
         </div>
         <p className="contact-tz reveal d4">Available via WhatsApp · Text · FaceTime</p>
