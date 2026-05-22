@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 /* ── constants ─────────────────────────────────────── */
 const PHONE   = '+254105978871';
-const WA_NUM  = PHONE.replace(/\D/g, '');
+const WA_NUM  = '+254105978871';
 const TT_1    = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
 const TT_2    = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
 const TT_MAIN = 'https://www.tiktok.com/@scurowalks';
