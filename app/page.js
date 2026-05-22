@@ -10,6 +10,26 @@ const TT_MAIN = 'https://www.tiktok.com/@scurowalks';
 const TT_1    = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546'; 
 const TT_2    = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
 
+/* ── parallax hooks ─────────────────────────────────── */
+function useParallax(speedFactor = 0.3) {
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    // Respect user choices regarding motion sensitivity
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+
+    const handleScroll = () => {
+      setOffset(window.scrollY * speedFactor);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [speedFactor]);
+
+  return offset;
+}
+
 /* ── scroll reveal ──────────────────────────────────── */
 function useReveal() {
   useEffect(() => {
@@ -189,7 +209,7 @@ function VideoCard({ href, cap, bgStyle }) {
           fill
           unoptimized
           sizes="(max-width: 768px) 100vw, 50vw"
-          style={{ objectFit: 'cover', zIndex: 0 }}
+          style={{ objectFit: 'cover', zIndex: 0 }} 
           className="transition-opacity duration-500 opacity-40 hover:opacity-70"
         />
       )}
@@ -213,6 +233,10 @@ function VideoCard({ href, cap, bgStyle }) {
 export default function Home() {
   useReveal();
   const navHidden = useNavHide();
+  
+  // Calculate distinct speed offsets for layered components
+  const bgOffset = useParallax(0.32);   // Background image layers glide slower
+  const textOffset = useParallax(-0.1); // Content moves slightly upward to counter layout drag
 
   return (
     <>
@@ -233,10 +257,25 @@ export default function Home() {
         </a>
       </nav>
 
-      {/* ════════ HERO ════════ */}
-      <section id="top" className="hero">
-        <div className="hero-bg" />
-        <div className="hero-left">
+      {/* ════════ HERO (WITH REFACTORED PARALLAX EFFECT) ════════ */}
+      <section id="top" className="hero relative overflow-hidden" style={{ minHeight: '100vh' }}>
+        
+        {/* Parallax Layer Background Panel */}
+        <div 
+          className="absolute inset-0 w-full h-[120%] -top-[10%] will-change-transform pointer-events-none"
+          style={{ 
+            transform: `translateY(${bgOffset}px)`,
+            zIndex: 0
+          }}
+        >
+          <div className="hero-bg w-full h-full opacity-40" />
+        </div>
+
+        {/* Content Elements shifted via complementary offsets */}
+        <div 
+          className="hero-left relative will-change-transform"
+          style={{ transform: `translateY(${textOffset}px)`, zIndex: 1 }}
+        >
           <div className="hero-greeting reveal d1">Hello. Welcome in.</div>
           <h1 className="hero-title reveal d2">
             Walking slow<br />
@@ -252,7 +291,10 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="hero-right">
+        <div 
+          className="hero-right relative will-change-transform"
+          style={{ transform: `translateY(${textOffset * 0.5}px)`, zIndex: 1 }}
+        >
           <div className="photo-frame reveal d3" style={{ width: '100%', maxWidth: '420px' }}>
             <div className="photo-frame-border-2" />
             <div className="photo-frame-border" />
@@ -568,7 +610,7 @@ export default function Home() {
 
       <div className="divider" />
 
-      {/* ════════ SCURO STREAMS (FIXED GRID AND PROPS) ════════ */}
+      {/* ════════ SCURO STREAMS ════════ */}
       <section id="scuro" className="pg-section scuro-section">
         <div className="pg-inner">
           <Eyebrow label="Scuro Walks" />
@@ -593,7 +635,6 @@ export default function Home() {
             </p>
           </div>
           
-          {/* Fix: Wrapped inside a beautiful flexible grid frame forcing vertical alignments side-by-side */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2.5rem', marginTop: '3.5rem', width: '100%' }}>
             <div className="reveal d2" style={{ display: 'flex', justifyContent: 'center' }}>
               <TikTokCard
