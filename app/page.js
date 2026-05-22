@@ -69,7 +69,7 @@ function Asset({ icon, sym, name, price, change, up }) {
   );
 }
 
-/* ── media card components ──────────────────────────── */
+// Add this component to app/page.js (or a components folder)
 function TikTokCard({ videoUrl }) {
   const [meta, setMeta] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,27 +96,46 @@ function TikTokCard({ videoUrl }) {
       href={videoUrl} 
       target="_blank" 
       rel="noreferrer" 
-      className="scuro-card reveal"
-      style={{ display: 'block', position: 'relative', overflow: 'hidden' }}
+      className="scuro-card reveal" // Keeps your existing CSS styles
+      style={{ 
+        display: 'block', 
+        position: 'relative', 
+        overflow: 'hidden',
+        aspectRatio: '9 / 16', // Forces the card container to match the TikTok video shape
+        width: '100%',
+        background: '#000' // Black background letters for any letterboxing spaces
+      }}
     >
+      {/* Renders the entire thumbnail without cropping it */}
       {meta?.thumbnail_url && (
         <Image
           src={meta.thumbnail_url}
           alt={meta.title || "TikTok Walk"}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
-          style={{ objectFit: 'cover', zIndex: 0 }}
-          className="transition-opacity duration-500 opacity-60 hover:opacity-80"
+          style={{ objectFit: 'contain', zIndex: 0 }} // Changed 'cover' to 'contain'
+          className="transition-opacity duration-500 opacity-90 hover:opacity-100" // Elevated opacity to see the full thumb clearly
         />
       )}
 
-      <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
+      {/* Content overlay container to preserve your text layout */}
+      <div 
+        style={{ 
+          position: 'absolute', 
+          bottom: 0, 
+          left: 0, 
+          right: 0, 
+          zIndex: 1, 
+          padding: '1.5rem',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%)' // Soft dark gradient only at the bottom for readability
+        }}
+      >
         {loading ? (
           <p className="text-faint">Fetching landscape...</p>
         ) : (
           <>
-            <p className="card-tag">WALK ASSET</p>
-            <h3 className="card-title">{meta?.title || "Field Note"}</h3>
+            <p className="card-tag" style={{ color: 'var(--gold)', margin: 0 }}>WALK ASSET</p>
+            <h3 className="card-title" style={{ margin: '0.25rem 0 0 0', color: '#fff' }}>{meta?.title || "Field Note"}</h3>
           </>
         )}
       </div>
