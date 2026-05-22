@@ -4,9 +4,12 @@ import Image from 'next/image';
 
 /* ── constants ─────────────────────────────────────── */
 const PHONE   = '+254105978871';
-const WA_NUM  = PHONE.replace(/\D/g, '');
-const TT_1    = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
-const TT_2    = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
+const WA_NUM  = '+254105978871';
+// Inside your main page component's JSX:
+<div className="tiktok-grid">
+  <TikTokCard videoUrl={TT_1} />
+  <TikTokCard videoUrl={TT_2} />
+</div>
 const TT_MAIN = 'https://www.tiktok.com/@scurowalks';
 
 /* ── scroll reveal ──────────────────────────────────── */
@@ -60,29 +63,58 @@ function Asset({ icon, sym, name, price, change, up }) {
   );
 }
 
-function VideoCard({ href, cap, bgStyle }) {
+// Add this component to app/page.js (or a components folder)
+function TikTokCard({ videoUrl }) {
+  const [meta, setMeta] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchThumbnail() {
+      try {
+        const res = await fetch(`/api/tiktok?url=${encodeURIComponent(videoUrl)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setMeta(data);
+        }
+      } catch (err) {
+        console.error("Error loading thumbnail:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchThumbnail();
+  }, [videoUrl]);
+
   return (
-    <a className="vid-card" href={href} target="_blank" rel="noreferrer">
-      <div className="vc-bg" style={bgStyle} />
-      <div className="vc-detail" />
-      <div className="vc-vignette" />
-      <div className="vc-overlay" />
-      {/* TikTok logo */}
-      <div className="vc-badge">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="white">
-          <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.14 8.14 0 004.76 1.52V6.76a4.85 4.85 0 01-1-.07z"/>
-        </svg>
-      </div>
-      {/* Play */}
-      <div className="vc-play">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="white">
-          <polygon points="5,3 19,12 5,21" />
-        </svg>
-      </div>
-      {/* Meta */}
-      <div className="vc-meta">
-        <div className="vc-handle">@scurowalks</div>
-        <div className="vc-cap">{cap}</div>
+    <a 
+      href={videoUrl} 
+      target="_blank" 
+      rel="noreferrer" 
+      className="scuro-card reveal" // Keeps your existing CSS styles
+      style={{ display: 'block', position: 'relative', overflow: 'hidden' }}
+    >
+      {/* If we have a thumbnail, render it behind your gorgeous gradients */}
+      {meta?.thumbnail_url && (
+        <Image
+          src={meta.thumbnail_url}
+          alt={meta.title || "TikTok Walk"}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          style={{ objectFit: 'cover', zIndex: 0 }}
+          className="transition-opacity duration-500 opacity-60 hover:opacity-80"
+        />
+      )}
+
+      {/* Content overlay container to preserve your text layout */}
+      <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
+        {loading ? (
+          <p className="text-faint">Fetching landscape...</p>
+        ) : (
+          <>
+            <p className="card-tag">WALK ASSET</p>
+            <h3 className="card-title">{meta?.title || "Field Note"}</h3>
+          </>
+        )}
       </div>
     </a>
   );
