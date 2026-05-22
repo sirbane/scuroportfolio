@@ -7,8 +7,8 @@ const PHONE   = '+254105978871';
 const WA_NUM  = '+254105978871';
 // Inside your main page component's JSX:
 <div className="tiktok-grid">
-  <TikTokCard videoUrl={TT_1} />
-  <TikTokCard videoUrl={TT_2} />
+  <TikTokCard videoUrl={https://www.tiktok.com/@scurowalks/video/7605281936306703634?is_from_webapp=1&sender_device=pc&web_id=7603714621921363473} />
+  <TikTokCard videoUrl={https://www.tiktok.com/@scurowalks/video/7611897363770166546?is_from_webapp=1&sender_device=pc&web_id=7603714621921363473} />
 </div>
 const TT_MAIN = 'https://www.tiktok.com/@scurowalks';
 
