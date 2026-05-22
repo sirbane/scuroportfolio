@@ -2,12 +2,19 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 
+<<<<<<< HEAD
 /* ── constants ─────────────────────────────────────── */
 const PHONE   = '+254105978871';
 const WA_NUM  = PHONE.replace(/\D/g, '');
 const TT_1    = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
 const TT_2    = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
 const TT_MAIN = 'https://www.tiktok.com/@scurowalks';
+=======
+const PHONE     = '+254105978871'; // ← replace with real number
+const WA_NUM    = PHONE.replace(/\D/g, '');
+const TT_LINK_1 = 'https://www.tiktok.com/@scurowalks/video/7611897363770166546';
+const TT_LINK_2 = 'https://www.tiktok.com/@scurowalks/video/7611907436244471047';
+>>>>>>> 9c404b5eba8a69580195fd58cb3947a321e7800c
 
 /* ── scroll reveal ──────────────────────────────────── */
 function useReveal() {
@@ -117,9 +124,16 @@ export default function Home() {
         <div className="hero-bg" />
         <div className="hero-coord">1.2921° S, 36.8219° E — Ongata Rongai, Kenya</div>
 
+<<<<<<< HEAD
         {/* Left */}
         <div className="hero-left">
           <div className="hero-greeting reveal d1">Hello, Mr. Garrett. Welcome.</div>
+=======
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div className="hero-greeting reveal d1">
+            Hello, Welcome to Griffin's Portfolio.
+          </div>
+>>>>>>> 9c404b5eba8a69580195fd58cb3947a321e7800c
           <h1 className="hero-title reveal d2">
             Walking slow<br />
             in a world that<br />
@@ -230,8 +244,17 @@ export default function Home() {
                   <li key={i} className="reveal"><span className="feat-arrow">→</span><div className="feat-text"><strong>{f.t}</strong>{f.d}</div></li>
                 ))}
               </ul>
+<<<<<<< HEAD
               <a href="/plain-speak-extension.zip" className="dl-btn reveal d3">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+=======
+
+              <a
+                href="https://scurrro.gumroad.com/l/ilmzh"
+                className="download-btn reveal d3"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+>>>>>>> 9c404b5eba8a69580195fd58cb3947a321e7800c
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
                 Download Extension
