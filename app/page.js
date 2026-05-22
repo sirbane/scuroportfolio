@@ -1,8 +1,4 @@
-Ah, I see what happened. It looks like you copied the conversational markdown text from my previous response directly into your `app/page.js` file instead of *just* the raw code block. Turbopack is crashing at line 1 because it's trying to compile the explanation text (`"Based on a review of..."`) as JavaScript!
 
-Here is the **completely clean, raw code**. Replace the entire content of your `app/page.js` file with this text from top to bottom (make sure no conversational text or backticks get included inside the file):
-
-```jsx
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
@@ -624,4 +620,3 @@ export default function Home() {
   );
 }
 
-```
